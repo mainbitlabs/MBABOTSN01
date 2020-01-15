@@ -34,7 +34,7 @@ class FallaDialog extends ComponentDialog {
     
     return await step.prompt(CHOICE_PROMPT, {
         prompt: '**Que tipo de falla quieres reportar.**',
-        choices: ChoiceFactory.toChoices(['Software', 'Hardware', 'General'])
+        choices: ChoiceFactory.toChoices(['Software', 'Hardware'])
         
     });
 }
@@ -57,12 +57,6 @@ async adjuntaStep(step) {
                     prompt:'Tipo de aplicativo que deseas reportar',
                     choices: ChoiceFactory.toChoices(['Institucional', 'Comercial'])
                 });
-            case "General":
-            
-                return await step.prompt(CHOICE_PROMPT,{
-                    prompt:'Tipo de aplicativo que deseas reportar',
-                    choices: ChoiceFactory.toChoices(['Red', 'Correo','CarpetaCompartida', 'Permisos','Bloqueodecuenta'])
-                });
 
         }
 
@@ -76,26 +70,8 @@ async adjuntaStep(step) {
         const sol = config.solicitud;
         sol.categoria = selection;
         console.log(config.solicitud);
-        return await step.prompt(TEXT_PROMPT, `¿En que horario y día nos puedes atender?`);
+        return await step.prompt(TEXT_PROMPT, 'Nos indicas el **día**, **horario** y tu **celular** para realizar la atención.');
         
-        // switch (selection) {
-            
-        //     case 'Institucional', 'Comercial':
-                
-        //         return await step.prompt(TEXT_PROMPT, `¿En que horario y día nos puedes atender?`);
-                
-        //     case 'Mouse', 'Teclado', 'Monitor', 'PC', 'Laptop', 'Docking', 'Impresora', 'No Break':
-        
-               
-        //         return await step.prompt(TEXT_PROMPT, `¿En que horario y día nos puedes atender?`);
-
-        //     case 'Red', 'Correo','CarpetaCompartida', 'Permisos','Bloqueodecuenta':
-        
-            
-        //         return await step.prompt(TEXT_PROMPT, `¿En que horario y día nos puedes atender?`);
-
-           
-        // }
     }
 
     async finalStep(step){

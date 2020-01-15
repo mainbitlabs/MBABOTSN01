@@ -7,7 +7,7 @@ const azureTS = require('azure-table-storage-async');
 // Dialogos
 const { FallaDialog, FALLA_DIALOG } = require('./FALLA');
 const { PeticionDialog, PETICION_DIALOG } = require('./PETICION');
-
+const { GeneralDialog, GENERAL_DIALOG } = require('./GENERAL');
 
 
 const { ChoiceFactory, ChoicePrompt, ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog, ListStyle} = require('botbuilder-dialogs');
@@ -24,6 +24,7 @@ class MainDialog extends CancelAndHelpDialog {
 
         this.addDialog(new FallaDialog());
         this.addDialog(new PeticionDialog());
+        this.addDialog(new GeneralDialog());
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
@@ -89,8 +90,8 @@ async dispatcher(step) {
         
         case 'Sí':
             return await step.prompt(CHOICE_PROMPT,{
-                prompt:'¿Tu solicitud es un requerimiento o una falla?',
-                choices: ChoiceFactory.toChoices(['Requerimiento', 'Falla'])
+                prompt:'¿Tu solicitud es un requerimiento, una falla o servicio general?',
+                choices: ChoiceFactory.toChoices(['Requerimiento', 'Falla', 'General'])
             });
         case 'No':
             return await step.context.sendActivity('Se envía notificación a oficina central para la validación de la información');             
@@ -113,6 +114,11 @@ async dispatcher(step) {
         if (answer ==='Requerimiento') {
             sol.tipo = answer;
             return await step.beginDialog(PETICION_DIALOG);
+            
+        } 
+        if (answer ==='General') {
+            sol.tipo = answer;
+            return await step.beginDialog(GENERAL_DIALOG);
             
         } 
         if (answer ==='Falla') {
