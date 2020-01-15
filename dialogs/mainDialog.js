@@ -5,11 +5,9 @@ const tableSvc = azurest.createTableService(config.storageA, config.accessK);
 const azureTS = require('azure-table-storage-async');
 
 // Dialogos
-const { UbicacionDialog, UBICACION_DIALOG } = require('./ubicacionDialog');
 const { FallaDialog, FALLA_DIALOG } = require('./FALLA');
 const { PeticionDialog, PETICION_DIALOG } = require('./PETICION');
-const { DocsDialog, DOCS_DIALOG } = require('./DOCS');
-const { IncidentDialog, INCIDENT_DIALOG } = require('./IncidentDialog');
+
 
 
 const { ChoiceFactory, ChoicePrompt, ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog, ListStyle} = require('botbuilder-dialogs');
@@ -24,12 +22,8 @@ class MainDialog extends CancelAndHelpDialog {
     constructor(id) {
         super(id || 'mainDialog');
 
-        
-        this.addDialog(new DocsDialog());
         this.addDialog(new FallaDialog());
         this.addDialog(new PeticionDialog());
-        this.addDialog(new IncidentDialog());
-        this.addDialog(new UbicacionDialog());
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
