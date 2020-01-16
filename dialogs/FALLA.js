@@ -82,7 +82,7 @@ async adjuntaStep(step) {
         console.log(config.solicitud);
         
         
-        await step.context.sendActivity(`Gracias por tu apoyo \n\n Tu solicitud fue: ${config.solicitud.tipo} \n\n ${config.solicitud.hs} \n\n ${config.solicitud.categoria} \n\n ${config.solicitud.date}`)
+        await step.context.sendActivity(`**Gracias por tu apoyo, tu solicitud fue la siguiente:**\n\n ‣${config.solicitud.tipo} \n\n ‣${config.solicitud.hs} \n\n ‣${config.solicitud.categoria} \n\n**Tu solicitud será atendida:**\n\n‣${config.solicitud.date}`)
         return await step.cancelAllDialogs();
 
         

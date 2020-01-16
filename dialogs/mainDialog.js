@@ -44,11 +44,14 @@ class MainDialog extends CancelAndHelpDialog {
 
 
 async serieStep(step){
-   await step.context.sendActivity('Recuerda que este bot tiene un tiempo limite de 10 minutos.');
-   return await step.prompt(TEXT_PROMPT, `Por favor, **escribe el Número de Serie del equipo.**`);
+    console.log('[mainDialog]:serieStep');
+    
+    await step.context.sendActivity('Recuerda que este bot tiene un tiempo limite de 10 minutos.');
+    return await step.prompt(TEXT_PROMPT, `Por favor, **escribe el Número de Serie del equipo.**`);
 }
 
 async infoConfirmStep(step) {
+    console.log('[mainDialog]:infoConfirmStep <<inicia>>');
     step.values.serie = step.result;
     const parkey = step.values.asociado;
     const rowkey = step.values.serie;
@@ -67,10 +70,19 @@ async infoConfirmStep(step) {
         config.ubicacion = r.Ubicacion._;
         config.inmueble = r.Inmueble._;
         config.usuario = r.Nombre._;
-
+if (r.PartitionKey._) {
+    console.log('[mainDialog]:infoConfirmStep <<success>>',config.marca);
     
     const msg=(`**Proyecto:** ${config.proyecto} \n\n **Número de Serie**: ${config.serie} \n\n  **Nombre:** ${config.usuario} \n\n **Marca:** ${config.marca}  \n\n  **Descripción:** ${config.caracteristicas} \n\n  **Ubicación:** ${config.ubicacion} \n\n  **Inmueble:** ${config.inmueble}  `);
     await step.context.sendActivity(msg);
+    return await step.prompt(CHOICE_PROMPT, {
+        prompt: '**¿Esta información es correcta?**',
+        choices: ChoiceFactory.toChoices(['Sí', 'No'])
+    });
+} else {
+    return await step.context.sendActivity('**No se encontró la serie en la base de datos, verifica la información y vuelve a intentarlo nuevamente.**'); 
+}
+    
 
       }
 
@@ -79,10 +91,6 @@ async infoConfirmStep(step) {
     // await step.context.sendActivity(msg);
     // console.log(config);
     
-    return await step.prompt(CHOICE_PROMPT, {
-        prompt: '**¿Esta información es correcta?**',
-        choices: ChoiceFactory.toChoices(['Sí', 'No'])
-    });
 }
 async dispatcher(step) {
     const selection = step.result.value;

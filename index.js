@@ -52,7 +52,7 @@ adapter.onTurnError = async (context, error) => {
     //       application insights.
     console.error(`\n [onTurnError]: ${ error }`);
     // Send a message to the user
-    await context.sendActivity(`Hubo un error, vuelve a intentarlo.`);
+    await context.sendActivity(`**Hubo un error, verifica la información que introduciste y vuelve a intentarlo.**`);
     // Clear out state
     await conversationState.delete(context);
 };

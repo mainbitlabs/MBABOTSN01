@@ -55,7 +55,7 @@ async peticionStep(step){
     sol.date = date;
     console.log(config.solicitud);
     
-    await step.context.sendActivity(`Gracias por tu apoyo, tu atención se estará dando seguimiento \n\n Tu solicitud fue: ${config.solicitud.tipo} de ${config.solicitud.peticion} \n\n Tu horario de atención será: ${config.solicitud.date}`);
+    await step.context.sendActivity(`**Gracias por tu apoyo, tu solicitud fue la siguiente:**\n\n ‣${config.solicitud.tipo} de ${config.solicitud.peticion} \n\n **Tu horario de atención será:**\n\n ‣${config.solicitud.date}`);
     return await step.endDialog();
 
 }
