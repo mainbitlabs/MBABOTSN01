@@ -62,26 +62,29 @@ async infoConfirmStep(step) {
   
     for (let r of result) {
         // const result = await azureTS.retrieveEntityAsync(tableSvc,config.table1, parkey, rowkey);
-        config.marca = r.PartitionKey._;
-        config.serie = r.RowKey._;
         config.proyecto = "Policia Federal";
-        config.cargo = r.Cargo._;
-        config.caracteristicas = r.Caracteristicas._;
-        config.ubicacion = r.Ubicacion._;
-        config.inmueble = r.Inmueble._;
-        config.usuario = r.Nombre._;
-if (r.PartitionKey._) {
-    console.log('[mainDialog]:infoConfirmStep <<success>>',config.marca);
-    
-    const msg=(`**Proyecto:** ${config.proyecto} \n\n **Número de Serie**: ${config.serie} \n\n  **Nombre:** ${config.usuario} \n\n **Marca:** ${config.marca}  \n\n  **Descripción:** ${config.caracteristicas} \n\n  **Ubicación:** ${config.ubicacion} \n\n  **Inmueble:** ${config.inmueble}  `);
-    await step.context.sendActivity(msg);
-    return await step.prompt(CHOICE_PROMPT, {
-        prompt: '**¿Esta información es correcta?**',
-        choices: ChoiceFactory.toChoices(['Sí', 'No'])
-    });
-} else {
-    return await step.context.sendActivity('**No se encontró la serie en la base de datos, verifica la información y vuelve a intentarlo nuevamente.**'); 
-}
+        config.tipo = r.TIPO._; 
+        config.modelo = r.MODELO._; 
+        config.marca = r.PartitionKey._; //MARCA
+        config.serie = r.RowKey._; //SERIE
+        config.usuario = r.NOMBRE._;
+        config.inmueble = r.INMUEBLE._;
+        config.direccion = r.DIRECCIONES._;
+        config.telefono = r.TELEFONO._;
+        config.ext = r.EXT._;
+        config.perfil = r.PERFIL._;
+        if (r.PartitionKey._) {
+            console.log('[mainDialog]:infoConfirmStep <<success>>',config.marca);
+            
+            const msg=(`**Proyecto:** ${config.proyecto}\n\n **Modelo**: ${config.modelo} \n\n **Número de Serie**: ${config.serie} \n\n  **Nombre:** ${config.usuario} \n\n **Marca:** ${config.marca}  \n\n  **Dirección:** ${config.direccion} \n\n  **Inmueble:** ${config.inmueble} \n\n  **Teléfono:** ${config.telefono} \n\n **Extensión**: ${config.ext} `);
+            await step.context.sendActivity(msg);
+            return await step.prompt(CHOICE_PROMPT, {
+                prompt: '**¿Esta información es correcta?**',
+                choices: ChoiceFactory.toChoices(['Sí', 'No'])
+            });
+        } else {
+            return await step.context.sendActivity('**No se encontró la serie en la base de datos, verifica la información y vuelve a intentarlo nuevamente.**'); 
+        }
     
 
       }
