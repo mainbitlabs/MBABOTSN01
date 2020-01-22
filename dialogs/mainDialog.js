@@ -9,9 +9,7 @@ const { FallaDialog, FALLA_DIALOG } = require('./FALLA');
 const { PeticionDialog, PETICION_DIALOG } = require('./PETICION');
 const { GeneralDialog, GENERAL_DIALOG } = require('./GENERAL');
 
-
 const { ChoiceFactory, ChoicePrompt, ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog, ListStyle} = require('botbuilder-dialogs');
-
 
 const CHOICE_PROMPT = "CHOICE_PROMPT";
 const TEXT_PROMPT = "TEXT_PROMPT";
@@ -27,21 +25,15 @@ class MainDialog extends CancelAndHelpDialog {
         this.addDialog(new GeneralDialog());
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
-
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.serieStep.bind(this),
             this.infoConfirmStep.bind(this),
             this.dispatcher.bind(this),
             this.choiceDialog.bind(this),
             this.finalDialog.bind(this)
-
         ]));
         this.initialDialogId = WATERFALL_DIALOG;
-
-
     }
-
-
 
 async serieStep(step){
     console.log('[mainDialog]:serieStep');
@@ -63,6 +55,7 @@ async infoConfirmStep(step) {
     for (let r of result) {
         // const result = await azureTS.retrieveEntityAsync(tableSvc,config.table1, parkey, rowkey);
         config.proyecto = "Policia Federal";
+        config.casm = r.CASM._;
         config.tipo = r.TIPO._; 
         config.modelo = r.MODELO._; 
         config.marca = r.PartitionKey._; //MARCA
@@ -70,11 +63,13 @@ async infoConfirmStep(step) {
         config.usuario = r.NOMBRE._;
         config.inmueble = r.INMUEBLE._;
         config.direccion = r.DIRECCIONES._;
+        config.estado = r.ESTADO._;
         config.telefono = r.TELEFONO._;
         config.ext = r.EXT._;
         config.perfil = r.PERFIL._;
         if (r.PartitionKey._) {
             console.log('[mainDialog]:infoConfirmStep <<success>>',config.marca);
+            console.log('[mainDialog]:infoConfirmStep <<success>>',config.casm);
             
             const msg=(`**Proyecto:** ${config.proyecto}\n\n **Modelo**: ${config.modelo} \n\n **Número de Serie**: ${config.serie} \n\n  **Nombre:** ${config.usuario} \n\n **Marca:** ${config.marca}  \n\n  **Dirección:** ${config.direccion} \n\n  **Inmueble:** ${config.inmueble} \n\n  **Teléfono:** ${config.telefono} \n\n **Extensión**: ${config.ext} `);
             await step.context.sendActivity(msg);
@@ -85,17 +80,11 @@ async infoConfirmStep(step) {
         } else {
             return await step.context.sendActivity('**No se encontró la serie en la base de datos, verifica la información y vuelve a intentarlo nuevamente.**'); 
         }
-    
-
-      }
-
-    // const msg=(`**Proyecto:** ${config.proyecto} \n\n **Número de Serie**: ${config.serie} \n\n  **Nombre:** ${config.usuario} \n\n **Marca:** ${config.marca}  \n\n  **Descripción:** ${config.caracteristicas} \n\n  **Ubicación:** ${config.ubicacion} \n\n  **Inmueble:** ${config.inmueble}  `);
-    
-    // await step.context.sendActivity(msg);
-    // console.log(config);
-    
+      }    
 }
+
 async dispatcher(step) {
+    console.log('[mainDialog]:dispatcher <<inicia>>');
     const selection = step.result.value;
     switch (selection) {
         
@@ -111,7 +100,10 @@ async dispatcher(step) {
             break;
     }
 }
+
     async choiceDialog(step) {
+        console.log('[mainDialog]:choiceDialog <<inicia>>');
+        
         const answer = step.result.value;
         config.solicitud = {};
         const sol = config.solicitud;
@@ -123,25 +115,27 @@ async dispatcher(step) {
             return await step.endDialog();
         }
         if (answer ==='Requerimiento') {
-            sol.tipo = answer;
+            sol.level1 = answer;
             return await step.beginDialog(PETICION_DIALOG);
             
         } 
         if (answer ==='General') {
-            sol.tipo = answer;
+            sol.level1 = answer;
             return await step.beginDialog(GENERAL_DIALOG);
             
         } 
         if (answer ==='Falla') {
-            sol.tipo = answer;
+            sol.level1 = answer;
             return await step.beginDialog(FALLA_DIALOG);
             
         } 
+        console.log('[mainDialog]:choiceDialog<<termina>>');
+        return await step.endDialog();
     
-    return await step.endDialog();
-    
-}
+    }
+
     async finalDialog(step){
+        console.log('[mainDialog]: finalDialog');
     return await step.endDialog();
     
     }
