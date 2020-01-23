@@ -45,7 +45,7 @@ async fechaStep(step){
     const sol = config.solicitud;
     sol.level2 = level2;
     sol.level3 = "";
-    console.log(config.solicitud);
+    // console.log(config.solicitud);
     return await step.prompt(TEXT_PROMPT, 'Indica **día y mes** (DD/MM),para realizar la atención.');
 }
 async horarioStep(step){
@@ -77,8 +77,6 @@ async finalStep(step){
 
     console.log(config.atencion);
     return await step.beginDialog(MAIL_DIALOG);
-    // await step.context.sendActivity(`**Gracias por tu apoyo, tu solicitud fue la siguiente:**\n\n ‣${config.solicitud.tipo} de ${config.solicitud.peticion} \n\n**Tu horario de atención será:**\n\n ‣${config.solicitud.date}`);
-    // return await step.endDialog();
 
 }
 

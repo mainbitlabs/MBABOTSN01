@@ -47,7 +47,7 @@ async secondStep(step) {
     const level2 = step.result.value;
     const sol = config.solicitud;
     sol.level2 = level2;
-        console.log(config.solicitud);
+        // console.log(config.solicitud);
         switch (level2) {
             case "Hardware":
                 return await step.prompt(CHOICE_PROMPT,{
@@ -69,7 +69,7 @@ async secondStep(step) {
         const level3 = step.result.value;
         const sol = config.solicitud;
         sol.level3 = level3;
-        console.log(config.solicitud);
+        // console.log(config.solicitud);
         return await step.prompt(TEXT_PROMPT, 'Indica **día y mes** (DD/MM),para realizar la atención.');
             
     }

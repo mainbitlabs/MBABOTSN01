@@ -47,7 +47,7 @@ async fechaStep(step){
     const sol = config.solicitud;
     sol.level2 = peticion;
     sol.level3= "";
-    console.log(config.solicitud);
+    // console.log(config.solicitud);
     return await step.prompt(TEXT_PROMPT, 'Indica **día y mes** (DD/MM),para realizar la atención.');
 }
 

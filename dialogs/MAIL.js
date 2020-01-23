@@ -28,10 +28,6 @@ class MailDialog extends ComponentDialog {
 
 async mailStep(step){
     console.log('[MailDialog]: mailStep');
-    
-    const date = step.result;
-    const sol = config.solicitud;
-    sol.date = date;
     console.log(config.solicitud);
     
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
