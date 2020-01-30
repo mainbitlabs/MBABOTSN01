@@ -33,25 +33,25 @@ async mailStep(step){
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
     config.sendemail = result.Contacto._;
     const meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-    const f = new Date();
-    const now = f.toLocaleString('sp-SP', { timeZone: 'UTC' }-6);
-    const spnow = now.split('-');
-    const sp2 = spnow[2].split(' ');
-    const dia = sp2[0];
-    const mes = meses[spnow[1]];
-    const anio = spnow[0];
-    const hrs = sp2[1];
-    console.log("f: ",f);
-    console.log("now: ",now);
-    console.log("spnow: ",spnow);
-    console.log("sp2: ",sp2);
-    console.log("dia: ",dia);
-    console.log("mes: ",mes);
-    console.log("año: ",anio);
-    console.log("hrs: ",hrs);
-
+    
     
     const email = new Promise((resolve, reject) => {
+        const f = new Date();
+        const now = f.toLocaleString('sp-SP', { timeZone: 'UTC' }-6);
+        const spnow = now.split('-');
+        const sp2 = spnow[2].split(' ');
+        const dia = sp2[0];
+        const mes = meses[spnow[1]];
+        const anio = spnow[0];
+        const hrs = sp2[1];
+        console.log("f: ",f);
+        console.log("now: ",now);
+        console.log("spnow: ",spnow);
+        console.log("sp2: ",sp2);
+        console.log("dia: ",dia);
+        console.log("mes: ",mes);
+        console.log("año: ",anio);
+        console.log("hrs: ",hrs);
         nodeoutlook.sendEmail({
             auth: {
                 user: `${config.email1}`,
