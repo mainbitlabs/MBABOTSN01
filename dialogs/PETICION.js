@@ -25,6 +25,7 @@ class PeticionDialog extends ComponentDialog {
             this.fechaStep.bind(this),
             this.horarioStep.bind(this),
             this.telefonoStep.bind(this),
+            this.correoStep.bind(this),
             this.finalStep.bind(this)
         ]));
         this.initialDialogId = WATERFALL_DIALOG;
@@ -41,7 +42,7 @@ class PeticionDialog extends ComponentDialog {
 }
 
 async fechaStep(step){
-    console.log('[peticion]: fechaDialog');
+    console.log('[peticion]: fechaStep');
     
     const peticion = step.result.value;
     const sol = config.solicitud;
@@ -52,7 +53,7 @@ async fechaStep(step){
 }
 
 async horarioStep(step){
-    console.log('[peticion]: horarioDialog');
+    console.log('[peticion]: horarioStep');
     const fecha = step.result;
     config.atencion = {};
     const att = config.atencion;
@@ -65,20 +66,29 @@ async horarioStep(step){
 }
 
 async telefonoStep(step){
-    console.log('[peticion]: telefonoDialog');
+    console.log('[peticion]: telefonoStep');
     const horario = step.result.value;
     const att = config.atencion;
     att.horario = horario;
 
     console.log(config.atencion);
-    return await step.prompt(TEXT_PROMPT, 'Indica **teléfono / celular**, para contactarte.');
+    return await step.prompt(TEXT_PROMPT, 'Escribe tu **teléfono / celular**, para contactarte.');
+}
+async correoStep(step){
+    console.log('[peticion]: correoStep');
+    const tel = step.result;
+    const att = config.atencion;
+    att.tel = tel;
+
+    console.log(config.atencion);
+    return await step.prompt(TEXT_PROMPT, 'Escribe tu **correo electrónico** para enviarte los detalles del servicio.');
 }
 
 async finalStep(step){
     console.log('[peticion]: finalStep');
-    const tel = step.result;
+    const email = step.result;
     const att = config.atencion;
-    att.tel = tel;
+    att.email = email;
 
     console.log(config.atencion);
     return await step.beginDialog(MAIL_DIALOG);

@@ -23,6 +23,7 @@ class GeneralDialog extends ComponentDialog {
             this.fechaStep.bind(this),
             this.horarioStep.bind(this),
             this.telefonoStep.bind(this),
+            this.correoStep.bind(this),
             this.finalStep.bind(this)
         ]));
         this.initialDialogId = WATERFALL_DIALOG;
@@ -67,13 +68,22 @@ async telefonoStep(step){
     att.horario = horario;
 
     console.log(config.atencion);
-    return await step.prompt(TEXT_PROMPT, 'Indica **teléfono / celular**, para contactarte.');
+    return await step.prompt(TEXT_PROMPT, 'Escribe tu **teléfono / celular**, para contactarte.');
 }
-async finalStep(step){
-    console.log('[GeneralDialog]: finalStep');
+async correoStep(step){
+    console.log('[peticion]: correoStep');
     const tel = step.result;
     const att = config.atencion;
     att.tel = tel;
+
+    console.log(config.atencion);
+    return await step.prompt(TEXT_PROMPT, 'Escribe tu **correo electrónico** para enviarte los detalles del servicio.');
+}
+async finalStep(step){
+    console.log('[GeneralDialog]: finalStep');
+    const email = step.result;
+    const att = config.atencion;
+    att.email = email;
 
     console.log(config.atencion);
     return await step.beginDialog(MAIL_DIALOG);

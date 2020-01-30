@@ -32,16 +32,40 @@ async mailStep(step){
     
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
     config.sendemail = result.Contacto._;
-
+    const f = new Date();
+    var mes = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
     const email = new Promise((resolve, reject) => {
         nodeoutlook.sendEmail({
             auth: {
                 user: `${config.email1}`,
                 pass: `${config.pass}`,
             }, from: `${config.email1}`,
-            to: `${config.sendemail}`,
+            to: `${config.atencion.email}`,
+            bcc: `${config.sendemail}`,
             subject: `${config.proyecto} Tipo de solicitud: ${config.solicitud.level1}: ${config.serie} / ${config.solicitud.level2} / ${config.solicitud.level3}`,
-            html: `<p>Solicitud:</p> <br> <b>${config.solicitud.level1} / ${config.solicitud.level2} / ${config.solicitud.level3}</b> <br> <b><blockquote>Fecha y horario de atención: ${config.atencion.fecha}, ${config.atencion.horario}, ${config.atencion.tel}</blockquote></b> <br> <b>Proyecto: ${config.proyecto}</b>  <br> <b>Serie: ${config.modelo}</b> <br> <b>Serie: ${config.serie}</b> <br> <b>Usuario: ${config.usuario}</b> <br> <b>Marca: ${config.marca}</b> <br> <b>Dirección: ${config.direccion}</b> <br> <b>Estado: ${config.estado}</b> <br> <b>Inmueble: ${config.inmueble}</b> <br> <b>Teléfono: ${config.telefono}</b> <br> <b>Extensión: ${config.ext}</b>`,
+            html: `<p>Estimado <b>${config.usuario}</b>, usted ha levantado una solicitud de servicio con la siguiente información:</p>
+
+            <p>Día y hora de registro del servicio: ${f.getDate()} de ${mes[f.getMonth()]} del ${f.getFullYear()}  ${f.getHours()}:${f.getMinutes()} </p>
+
+            <p>La solicitud registrada es: <b>${config.solicitud.level1} / ${config.solicitud.level2} / ${config.solicitud.level3}</b></p> 
+            <b>Cita programada: ${config.atencion.fecha}, ${config.atencion.horario}, ${config.atencion.tel}</b> 
+            <hr>
+            <p>Datos del equipo reportado:</p><br> 
+            <b>Proyecto: ${config.proyecto}</b>  <br> 
+            <b>Modelo: ${config.modelo}</b> <br> 
+            <b>Serie: ${config.serie}</b> <br> 
+            <b>Usuario: ${config.usuario}</b> <br> 
+            <b>Marca: ${config.marca}</b> <br> 
+            <b>Dirección: ${config.direccion}</b> <br> 
+            <b>Estado: ${config.estado}</b> <br> 
+            <b>Inmueble: ${config.inmueble}</b> <br> 
+            <b>Teléfono: ${config.telefono}</b> <br> 
+            <b>Extensión: ${config.ext}</b> <br>
+            <hr> 
+            <p>En breve nuestro ingeniero se comunicará con usted.</p>
+            <p>Un placer atenderle.</p>
+            <p>Equipo Mainbit.</p>
+            `,
             onError: (e) => reject(console.log(e)),
             onSuccess: (i) => resolve(console.log(i))
             }
