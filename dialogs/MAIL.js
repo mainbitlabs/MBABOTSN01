@@ -4,15 +4,11 @@ var nodeoutlook = require('nodejs-nodemailer-outlook');
 const tableSvc1 = azurest.createTableService(config.storageA1, config.accessK1);
 const azureTS = require('azure-table-storage-async');
 
+
 const meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-const f = new Date();
-const now = f.toLocaleString('sp-SP', { timeZone: 'UTC' }-6);
-const spnow = now.split('-');
-const sp2 = spnow[2].split(' ');
-const dia = sp2[0];
-const mes = meses[spnow[1]];
-const anio = spnow[0];
-const hrs = sp2[1];
+var f = new Date();
+f.setHours(now.getHours()-6);
+var now = f.toLocaleString();
 
 
 const { ComponentDialog, WaterfallDialog, ChoicePrompt, ChoiceFactory, TextPrompt,AttachmentPrompt } = require('botbuilder-dialogs');
@@ -40,15 +36,7 @@ class MailDialog extends ComponentDialog {
 async mailStep(step){
     console.log('[MailDialog]: mailStep');
     console.log(config.solicitud);
-    
-    console.log("f: ",f);
-    console.log("now: ",now);
-    console.log("spnow: ",spnow);
-    console.log("sp2: ",sp2);
-    console.log("dia: ",dia);
-    console.log("mes: ",mes);
-    console.log("año: ",anio);
-    console.log("hrs: ",hrs);
+
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
     config.sendemail = result.Contacto._;
     
@@ -65,7 +53,7 @@ async mailStep(step){
             subject: `${config.proyecto} Tipo de solicitud: ${config.solicitud.level1}: ${config.serie} / ${config.solicitud.level2} / ${config.solicitud.level3}`,
             html: `<p>Estimado <b>${config.usuario}</b>, usted ha levantado una solicitud de servicio con la siguiente información:</p>
 
-            <p>Día y hora de registro del servicio: ${dia} de ${mes} del ${anio}  ${hrs} </p>
+            <p>Día y hora de registro del servicio: ${now} </p>
 
             <p>La solicitud registrada es: <b>${config.solicitud.level1} / ${config.solicitud.level2} / ${config.solicitud.level3}</b></p> 
             <b>Cita programada: ${config.atencion.fecha}, ${config.atencion.horario}, ${config.atencion.tel}</b> 
