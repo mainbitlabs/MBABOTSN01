@@ -32,8 +32,15 @@ async mailStep(step){
     
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
     config.sendemail = result.Contacto._;
+    const meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
     const f = new Date();
-    var mes = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+    const now = f.toLocaleString('sp-SP', { timeZone: 'UTC' }-6);
+    const spnow = now.split('-');
+    const sp2 = spnow[2].split(' ');
+    const dia = sp2[0];
+    const mes = meses[spnow[1]];
+    const anio = spnow[0];
+    const hrs = sp2[1];
     const email = new Promise((resolve, reject) => {
         nodeoutlook.sendEmail({
             auth: {
@@ -45,7 +52,7 @@ async mailStep(step){
             subject: `${config.proyecto} Tipo de solicitud: ${config.solicitud.level1}: ${config.serie} / ${config.solicitud.level2} / ${config.solicitud.level3}`,
             html: `<p>Estimado <b>${config.usuario}</b>, usted ha levantado una solicitud de servicio con la siguiente información:</p>
 
-            <p>Día y hora de registro del servicio: ${f.getDate()} de ${mes[f.getMonth()]} del ${f.getFullYear()}  ${f.getHours()}:${f.getMinutes()} </p>
+            <p>Día y hora de registro del servicio: ${dia} de ${mes} del ${anio}  ${hrs} </p>
 
             <p>La solicitud registrada es: <b>${config.solicitud.level1} / ${config.solicitud.level2} / ${config.solicitud.level3}</b></p> 
             <b>Cita programada: ${config.atencion.fecha}, ${config.atencion.horario}, ${config.atencion.tel}</b> 
