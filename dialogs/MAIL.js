@@ -4,13 +4,7 @@ var nodeoutlook = require('nodejs-nodemailer-outlook');
 const tableSvc1 = azurest.createTableService(config.storageA1, config.accessK1);
 const azureTS = require('azure-table-storage-async');
 
-
 const meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-var f = new Date();
-f.setHours(f.getHours()-6);
-var now = f.toLocaleString();
-
-
 
 const { ComponentDialog, WaterfallDialog, ChoicePrompt, ChoiceFactory, TextPrompt,AttachmentPrompt } = require('botbuilder-dialogs');
 
@@ -40,7 +34,9 @@ async mailStep(step){
 
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
     config.sendemail = result.Contacto._;
-    
+    var f = new Date();
+    f.setHours(f.getHours()-6);
+    var now = f.toLocaleString();
     
     const email = new Promise((resolve, reject) => {
         
