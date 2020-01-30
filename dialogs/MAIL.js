@@ -41,6 +41,16 @@ async mailStep(step){
     const mes = meses[spnow[1]];
     const anio = spnow[0];
     const hrs = sp2[1];
+    console.log("f: ",f);
+    console.log("now: ",now);
+    console.log("spnow: ",spnow);
+    console.log("sp2: ",sp2);
+    console.log("dia: ",dia);
+    console.log("mes: ",mes);
+    console.log("año: ",anio);
+    console.log("hrs: ",hrs);
+
+    
     const email = new Promise((resolve, reject) => {
         nodeoutlook.sendEmail({
             auth: {
