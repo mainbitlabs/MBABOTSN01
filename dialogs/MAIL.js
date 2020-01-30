@@ -57,6 +57,7 @@ async mailStep(step){
             <p>Día y hora de registro del servicio:${f.getDate()} de ${meses[f.getMonth()]} del ${f.getFullYear()} ${f.getUTCHours()}<span>:</span>${f.getMinutes()} </p>
 
             <p>La solicitud registrada es: <b>${config.solicitud.level1} / ${config.solicitud.level2} / ${config.solicitud.level3}</b></p> 
+            <hr>
             <b>Cita programada: ${config.atencion.fecha}, ${config.atencion.horario}, ${config.atencion.tel}</b> 
             <hr>
             <p>Datos del equipo reportado:</p><br> 
