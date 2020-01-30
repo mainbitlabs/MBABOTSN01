@@ -4,6 +4,17 @@ var nodeoutlook = require('nodejs-nodemailer-outlook');
 const tableSvc1 = azurest.createTableService(config.storageA1, config.accessK1);
 const azureTS = require('azure-table-storage-async');
 
+const meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+const f = new Date();
+const now = f.toLocaleString('sp-SP', { timeZone: 'UTC' }-6);
+const spnow = now.split('-');
+const sp2 = spnow[2].split(' ');
+const dia = sp2[0];
+const mes = meses[spnow[1]];
+const anio = spnow[0];
+const hrs = sp2[1];
+
+
 const { ComponentDialog, WaterfallDialog, ChoicePrompt, ChoiceFactory, TextPrompt,AttachmentPrompt } = require('botbuilder-dialogs');
 
 const MAIL_DIALOG = "MAIL_DIALOG";
@@ -30,28 +41,20 @@ async mailStep(step){
     console.log('[MailDialog]: mailStep');
     console.log(config.solicitud);
     
+    console.log("f: ",f);
+    console.log("now: ",now);
+    console.log("spnow: ",spnow);
+    console.log("sp2: ",sp2);
+    console.log("dia: ",dia);
+    console.log("mes: ",mes);
+    console.log("año: ",anio);
+    console.log("hrs: ",hrs);
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
     config.sendemail = result.Contacto._;
-    const meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
     
     
     const email = new Promise((resolve, reject) => {
-        const f = new Date();
-        const now = f.toLocaleString('sp-SP', { timeZone: 'UTC' }-6);
-        const spnow = now.split('-');
-        const sp2 = spnow[2].split(' ');
-        const dia = sp2[0];
-        const mes = meses[spnow[1]];
-        const anio = spnow[0];
-        const hrs = sp2[1];
-        console.log("f: ",f);
-        console.log("now: ",now);
-        console.log("spnow: ",spnow);
-        console.log("sp2: ",sp2);
-        console.log("dia: ",dia);
-        console.log("mes: ",mes);
-        console.log("año: ",anio);
-        console.log("hrs: ",hrs);
+        
         nodeoutlook.sendEmail({
             auth: {
                 user: `${config.email1}`,
