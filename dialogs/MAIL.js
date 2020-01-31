@@ -3,8 +3,8 @@ const azurest = require('azure-storage');
 var nodeoutlook = require('nodejs-nodemailer-outlook');
 const tableSvc1 = azurest.createTableService(config.storageA1, config.accessK1);
 const azureTS = require('azure-table-storage-async');
-
-const meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+const moment = require('moment');
+moment.locale('es');
 
 const { ComponentDialog, WaterfallDialog, ChoicePrompt, ChoiceFactory, TextPrompt,AttachmentPrompt } = require('botbuilder-dialogs');
 
@@ -34,12 +34,15 @@ async mailStep(step){
 
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
     config.sendemail = result.Contacto._;
-    var f = new Date();
-    f.setHours(f.getHours()-6);
-    var now = f.toLocaleString();
+    // const meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+    // var f = new Date();
+    // f.setHours(f.getHours()-6);
+    // var now = f.toLocaleString();
+
     
     const email = new Promise((resolve, reject) => {
         
+        // <p>Día y hora de registro del servicio:${f.getDate()} de ${meses[f.getMonth()]} del ${f.getFullYear()} ${f.getUTCHours()}<span>:</span>${f.getMinutes()} </p>
         nodeoutlook.sendEmail({
             auth: {
                 user: `${config.email1}`,
@@ -50,7 +53,7 @@ async mailStep(step){
             subject: `${config.proyecto} Tipo de solicitud: ${config.solicitud.level1}: ${config.serie} / ${config.solicitud.level2} / ${config.solicitud.level3}`,
             html: `<p>Estimado <b>${config.usuario}</b>, usted ha levantado una solicitud de servicio con la siguiente información:</p>
 
-            <p>Día y hora de registro del servicio:${f.getDate()} de ${meses[f.getMonth()]} del ${f.getFullYear()} ${f.getUTCHours()}<span>:</span>${f.getMinutes()} </p>
+            <p>Día y hora de registro del servicio:${moment().format('LLL')} </p>
 
             <p>La solicitud registrada es: <b>${config.solicitud.level1} / ${config.solicitud.level2} / ${config.solicitud.level3}</b></p> 
             <hr>
