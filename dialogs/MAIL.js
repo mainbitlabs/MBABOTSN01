@@ -3,8 +3,9 @@ const azurest = require('azure-storage');
 var nodeoutlook = require('nodejs-nodemailer-outlook');
 const tableSvc1 = azurest.createTableService(config.storageA1, config.accessK1);
 const azureTS = require('azure-table-storage-async');
-const moment = require('moment');
+const moment = require('moment-timezone');
 moment.locale('es');
+var cdmx    = moment().tz("America/Mexico_City");
 
 const { ComponentDialog, WaterfallDialog, ChoicePrompt, ChoiceFactory, TextPrompt,AttachmentPrompt } = require('botbuilder-dialogs');
 
@@ -53,7 +54,7 @@ async mailStep(step){
             subject: `${config.proyecto} Tipo de solicitud: ${config.solicitud.level1}: ${config.serie} / ${config.solicitud.level2} / ${config.solicitud.level3}`,
             html: `<p>Estimado <b>${config.usuario}</b>, usted ha levantado una solicitud de servicio con la siguiente información:</p>
 
-            <p>Día y hora de registro del servicio:${moment().format('LLL')} </p>
+            <p>Día y hora de registro del servicio:${cdmx.format('LLL')} </p>
 
             <p>La solicitud registrada es: <b>${config.solicitud.level1} / ${config.solicitud.level2} / ${config.solicitud.level3}</b></p> 
             <hr>
