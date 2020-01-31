@@ -1,20 +1,19 @@
 const config = require('../config');
 const azurest = require('azure-storage');
-var nodeoutlook = require('nodejs-nodemailer-outlook');
+const nodeoutlook = require('nodejs-nodemailer-outlook');
 const tableSvc1 = azurest.createTableService(config.storageA1, config.accessK1);
 const azureTS = require('azure-table-storage-async');
 const moment = require('moment-timezone');
 moment.locale('es');
-var cdmx    = moment().tz("America/Mexico_City");
+const cdmx = moment().tz("America/Mexico_City");
 
-const { ComponentDialog, WaterfallDialog, ChoicePrompt, ChoiceFactory, TextPrompt,AttachmentPrompt } = require('botbuilder-dialogs');
+const { ComponentDialog, WaterfallDialog, ChoicePrompt, TextPrompt,AttachmentPrompt } = require('botbuilder-dialogs');
 
 const MAIL_DIALOG = "MAIL_DIALOG";
 const CHOICE_PROMPT = "CHOICE_PROMPT";
 const TEXT_PROMPT = "TEXT_PROMPT";
 const ATTACH_PROMPT = "ATTACH_PROMPT";
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
-
 
 class MailDialog extends ComponentDialog {
     constructor(){
@@ -26,24 +25,15 @@ class MailDialog extends ComponentDialog {
             this.mailStep.bind(this)
         ]));
         this.initialDialogId = WATERFALL_DIALOG;
-
     }
 
 async mailStep(step){
     console.log('[MailDialog]: mailStep');
     console.log(config.solicitud);
-
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
     config.sendemail = result.Contacto._;
-    // const meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-    // var f = new Date();
-    // f.setHours(f.getHours()-6);
-    // var now = f.toLocaleString();
-
     
-    const email = new Promise((resolve, reject) => {
-        
-        // <p>Día y hora de registro del servicio:${f.getDate()} de ${meses[f.getMonth()]} del ${f.getFullYear()} ${f.getUTCHours()}<span>:</span>${f.getMinutes()} </p>
+    const email = new Promise((resolve, reject) => { 
         nodeoutlook.sendEmail({
             auth: {
                 user: `${config.email1}`,
@@ -54,7 +44,7 @@ async mailStep(step){
             subject: `${config.proyecto} Tipo de solicitud: ${config.solicitud.level1}: ${config.serie} / ${config.solicitud.level2} / ${config.solicitud.level3}`,
             html: `<p>Estimado <b>${config.usuario}</b>, usted ha levantado una solicitud de servicio con la siguiente información:</p>
 
-            <p>Día y hora de registro del servicio:${cdmx.format('LLL')} </p>
+            <p>Día y hora de registro del servicio: <b>${cdmx.format('LLL')}</b> </p>
 
             <p>La solicitud registrada es: <b>${config.solicitud.level1} / ${config.solicitud.level2} / ${config.solicitud.level3}</b></p> 
             <hr>
@@ -75,6 +65,8 @@ async mailStep(step){
             <p>En breve nuestro ingeniero se comunicará con usted.</p>
             <p>Un placer atenderle.</p>
             <p>Equipo Mainbit.</p>
+            <hr>
+            <img style="width:100%" src="https://raw.githubusercontent.com/esanchezlMBT/images/master/firma2020.jpg">
             `,
             onError: (e) => reject(console.log(e)),
             onSuccess: (i) => resolve(console.log(i))

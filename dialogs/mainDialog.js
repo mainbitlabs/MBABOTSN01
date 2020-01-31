@@ -9,7 +9,7 @@ const { FallaDialog, FALLA_DIALOG } = require('./FALLA');
 const { PeticionDialog, PETICION_DIALOG } = require('./PETICION');
 const { GeneralDialog, GENERAL_DIALOG } = require('./GENERAL');
 
-const { ChoiceFactory, ChoicePrompt, ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog, ListStyle} = require('botbuilder-dialogs');
+const { ChoiceFactory, ChoicePrompt, TextPrompt, WaterfallDialog} = require('botbuilder-dialogs');
 
 const CHOICE_PROMPT = "CHOICE_PROMPT";
 const TEXT_PROMPT = "TEXT_PROMPT";
@@ -44,23 +44,20 @@ async serieStep(step){
 async infoConfirmStep(step) {
     console.log('[mainDialog]:infoConfirmStep <<inicia>>');
     step.values.serie = step.result;
-    const parkey = step.values.asociado;
     const rowkey = step.values.serie;
-    // console.log(step.values);
+
     const query = new azurest.TableQuery().where('RowKey eq ?', rowkey);
     const result = await azureTS.queryCustomAsync(tableSvc,config.table1, query);
-    // console.log("_RESULT_QUERY",result);
+
     if (result[0] == undefined) {  
         console.log('[mainDialog]:infoConfirmStep <<request fail>>', rowkey);
         
         await step.context.sendActivity(`La serie **${step.values.serie}** no se encontró en la base de datos, verifica la información y vuelve a intentarlo nuevamente.`); 
         return await step.endDialog();
     } else {
-        console.log('[mainDialog]:infoConfirmStep <<success>>',config.marca);
-        console.log('[mainDialog]:infoConfirmStep <<success>>',config.casm);
+        console.log('[mainDialog]:infoConfirmStep <<success>>');
         
         for (let r of result) {
-            // const result = await azureTS.retrieveEntityAsync(tableSvc,config.table1, parkey, rowkey);
             config.proyecto = "Policia Federal";
             config.casm = r.CASM._;
             config.tipo = r.TIPO._; 
@@ -106,7 +103,6 @@ async dispatcher(step) {
 
     async choiceDialog(step) {
         console.log('[mainDialog]:choiceDialog <<inicia>>');
-        
         const answer = step.result.value;
         config.solicitud = {};
         const sol = config.solicitud;
