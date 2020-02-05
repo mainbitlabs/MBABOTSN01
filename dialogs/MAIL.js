@@ -4,8 +4,7 @@ const nodeoutlook = require('nodejs-nodemailer-outlook');
 const tableSvc1 = azurest.createTableService(config.storageA1, config.accessK1);
 const azureTS = require('azure-table-storage-async');
 const moment = require('moment-timezone');
-moment.locale('es');
-const cdmx = moment().tz("America/Mexico_City");
+
 
 const { ComponentDialog, WaterfallDialog, ChoicePrompt, TextPrompt,AttachmentPrompt } = require('botbuilder-dialogs');
 
@@ -32,7 +31,10 @@ async mailStep(step){
     console.log(config.solicitud);
     const result = await azureTS.retrieveEntityAsync(tableSvc1, config.table3, 'CASM', config.casm);
     config.sendemail = result.Contacto._;
-    
+    moment.locale('es');
+const cdmx = moment().tz("America/Mexico_City");
+console.log(cdmx.format('LLL'));
+
     const email = new Promise((resolve, reject) => { 
         nodeoutlook.sendEmail({
             auth: {
