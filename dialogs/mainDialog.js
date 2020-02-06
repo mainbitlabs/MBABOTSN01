@@ -1,13 +1,25 @@
-const { CancelAndHelpDialog } = require('./cancelAndHelpDialog');
-var config = require('../config');
-const azurest = require('azure-storage');
+/**
+
+                  _       _____  _       _             
+                 (_)     |  __ \(_)     | |            
+  _ __ ___   __ _ _ _ __ | |  | |_  __ _| | ___   __ _ 
+ | '_ ` _ \ / _` | | '_ \| |  | | |/ _` | |/ _ \ / _` |
+ | | | | | | (_| | | | | | |__| | | (_| | | (_) | (_| |
+ |_| |_| |_|\__,_|_|_| |_|_____/|_|\__,_|_|\___/ \__, |
+                                                  __/ |
+                                                 |___/ 
+
+ */
+const config = require('../config');
+const azurest = require('azure-storage'); 
 const tableSvc = azurest.createTableService(config.storageA, config.accessK);
 const azureTS = require('azure-table-storage-async');
 
 // Dialogos
+const { CancelAndHelpDialog } = require('./cancelAndHelpDialog');
+const { MailerDialog, MAILER_DIALOG } = require('./MAILER');
 const { FallaDialog, FALLA_DIALOG } = require('./FALLA');
-const { PeticionDialog, PETICION_DIALOG } = require('./PETICION');
-const { GeneralDialog, GENERAL_DIALOG } = require('./GENERAL');
+const { ServicioDialog, SERVICIO_DIALOG } = require('./SERVICIO');
 
 const { ChoiceFactory, ChoicePrompt, TextPrompt, WaterfallDialog} = require('botbuilder-dialogs');
 
@@ -20,8 +32,8 @@ class MainDialog extends CancelAndHelpDialog {
         super(id || 'mainDialog');
 
         this.addDialog(new FallaDialog());
-        this.addDialog(new PeticionDialog());
-        this.addDialog(new GeneralDialog());
+        this.addDialog(new MailerDialog());
+        this.addDialog(new ServicioDialog());
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
@@ -91,46 +103,44 @@ async dispatcher(step) {
         case 'Sí':
             return await step.prompt(CHOICE_PROMPT,{
                 prompt:'¿Tu solicitud es un requerimiento, una falla o servicio general?',
-                choices: ChoiceFactory.toChoices(['Requerimiento', 'Falla', 'General'])
+                choices: ChoiceFactory.toChoices(['Falla', 'Servicio'])
             });
+
         case 'No':
-            return await step.context.sendActivity('Se envía notificación a oficina central para la validación de la información');             
-                 
-        default:
-            break;
+           return await step.beginDialog(MAILER_DIALOG);             
+          
     }
 }
 
     async choiceDialog(step) {
         console.log('[mainDialog]:choiceDialog <<inicia>>');
-        const answer = step.result.value;
-        config.solicitud = {};
-        const sol = config.solicitud;
-        
-        if (!answer) {
-            // exhausted attempts and no selection, start over
-            await step.context.sendActivity('Not a valid option. We\'ll restart the dialog ' +
-                'so you can try again!');
+        // console.log('result ?',step.result);
+
+        if (step.result === undefined) {
             return await step.endDialog();
-        }
-        if (answer ==='Requerimiento') {
-            sol.level1 = answer;
-            return await step.beginDialog(PETICION_DIALOG);
-            
-        } 
-        if (answer ==='General') {
-            sol.level1 = answer;
-            return await step.beginDialog(GENERAL_DIALOG);
-            
-        } 
-        if (answer ==='Falla') {
-            sol.level1 = answer;
-            return await step.beginDialog(FALLA_DIALOG);
-            
-        } 
+        } else {
+            const answer = step.result.value;
+            config.solicitud = {};
+            const sol = config.solicitud;
+            if (!step.result) {
+            }
+            if (!answer) {
+                // exhausted attempts and no selection, start over
+                await step.context.sendActivity('Not a valid option. We\'ll restart the dialog ' +
+                    'so you can try again!');
+                return await step.endDialog();
+            }
+            if (answer ==='Falla') {
+                sol.level1 = answer;
+                return await step.beginDialog(FALLA_DIALOG); 
+            } 
+            if (answer ==='Servicio') {
+                sol.level1 = answer;
+                return await step.beginDialog(SERVICIO_DIALOG); 
+            } 
+    }
         console.log('[mainDialog]:choiceDialog<<termina>>');
         return await step.endDialog();
-    
     }
 
     async finalDialog(step){
