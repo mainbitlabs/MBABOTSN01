@@ -20,7 +20,7 @@ const { CancelAndHelpDialog } = require('./cancelAndHelpDialog');
 const { MailerDialog, MAILER_DIALOG } = require('./MAILER');
 const { FallaDialog, FALLA_DIALOG } = require('./FALLA');
 const { ServicioDialog, SERVICIO_DIALOG } = require('./SERVICIO');
-const { UserProfile } = require('../userProfile');
+// const { UserProfile } = require('../userProfile');
 
 const { ChoiceFactory, ChoicePrompt, TextPrompt, WaterfallDialog} = require('botbuilder-dialogs');
 
