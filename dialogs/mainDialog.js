@@ -20,6 +20,7 @@ const { CancelAndHelpDialog } = require('./cancelAndHelpDialog');
 const { MailerDialog, MAILER_DIALOG } = require('./MAILER');
 const { FallaDialog, FALLA_DIALOG } = require('./FALLA');
 const { ServicioDialog, SERVICIO_DIALOG } = require('./SERVICIO');
+const { UserProfile } = require('../userProfile');
 
 const { ChoiceFactory, ChoicePrompt, TextPrompt, WaterfallDialog} = require('botbuilder-dialogs');
 
@@ -48,6 +49,10 @@ class MainDialog extends CancelAndHelpDialog {
 
 async serieStep(step){
     console.log('[mainDialog]:serieStep');
+    const details = step.options;
+    // details.serie = "1234";
+    // return await step.next(details.serie);
+    console.log(step);
     
     await step.context.sendActivity('Recuerda que este bot tiene un tiempo limite de 10 minutos.');
     return await step.prompt(TEXT_PROMPT, `Por favor, **escribe el Número de Serie del equipo.**`);
@@ -55,8 +60,9 @@ async serieStep(step){
 
 async infoConfirmStep(step) {
     console.log('[mainDialog]:infoConfirmStep <<inicia>>');
-    step.values.serie = step.result;
-    const rowkey = step.values.serie;
+    const details = step.options;
+    details.serie = step.result;
+    const rowkey = details.serie;
 
     const query = new azurest.TableQuery().where('RowKey eq ?', rowkey);
     const result = await azureTS.queryCustomAsync(tableSvc,config.table1, query);
@@ -70,21 +76,21 @@ async infoConfirmStep(step) {
         console.log('[mainDialog]:infoConfirmStep <<success>>');
         
         for (let r of result) {
-            config.proyecto = "Policia Federal";
-            config.casm = r.CASM._;
-            config.tipo = r.TIPO._; 
-            config.modelo = r.MODELO._; 
-            config.marca = r.PartitionKey._; //MARCA
-            config.serie = r.RowKey._; //SERIE
-            config.usuario = r.NOMBRE._;
-            config.inmueble = r.INMUEBLE._;
-            config.direccion = r.DIRECCIONES._;
-            config.estado = r.ESTADO._;
-            config.telefono = r.TELEFONO._;
-            config.ext = r.EXT._;
-            config.perfil = r.PERFIL._;
+            details.proyecto = "Policia Federal";
+            details.casm = r.CASM._;
+            details.tipo = r.TIPO._; 
+            details.modelo = r.MODELO._; 
+            details.marca = r.PartitionKey._; //MARCA
+            details.serie = r.RowKey._; //SERIE
+            details.usuario = r.NOMBRE._;
+            details.inmueble = r.INMUEBLE._;
+            details.direccion = r.DIRECCIONES._;
+            details.estado = r.ESTADO._;
+            details.telefono = r.TELEFONO._;
+            details.ext = r.EXT._;
+            details.perfil = r.PERFIL._;
 
-            const msg=(`**Proyecto:** ${config.proyecto}\n\n **Modelo**: ${config.modelo} \n\n **Número de Serie**: ${config.serie} \n\n  **Nombre:** ${config.usuario} \n\n **Marca:** ${config.marca}  \n\n  **Dirección:** ${config.direccion} \n\n  **Inmueble:** ${config.inmueble} \n\n  **Teléfono:** ${config.telefono} \n\n **Extensión**: ${config.ext} `);
+            const msg=(`**Proyecto:** ${details.proyecto}\n\n **Modelo**: ${details.modelo} \n\n **Número de Serie**: ${details.serie} \n\n  **Nombre:** ${details.usuario} \n\n **Marca:** ${details.marca}  \n\n  **Dirección:** ${details.direccion} \n\n  **Inmueble:** ${details.inmueble} \n\n  **Teléfono:** ${details.telefono} \n\n **Extensión**: ${details.ext} `);
             await step.context.sendActivity(msg);
             return await step.prompt(CHOICE_PROMPT, {
                 prompt: '**¿Esta información es correcta?**',
@@ -97,6 +103,10 @@ async infoConfirmStep(step) {
 
 async dispatcher(step) {
     console.log('[mainDialog]:dispatcher <<inicia>>');
+    const details = step.options;
+    // console.log(details);
+    
+
     const selection = step.result.value;
     switch (selection) {
         
@@ -107,21 +117,22 @@ async dispatcher(step) {
             });
 
         case 'No':
-           return await step.beginDialog(MAILER_DIALOG);             
+           return await step.beginDialog(MAILER_DIALOG, details);             
           
     }
 }
 
     async choiceDialog(step) {
         console.log('[mainDialog]:choiceDialog <<inicia>>');
+        const details = step.options;
         // console.log('result ?',step.result);
 
         if (step.result === undefined) {
             return await step.endDialog();
         } else {
             const answer = step.result.value;
-            config.solicitud = {};
-            const sol = config.solicitud;
+            details.solicitud = {};
+            const sol = details.solicitud;
             if (!step.result) {
             }
             if (!answer) {
@@ -132,11 +143,11 @@ async dispatcher(step) {
             }
             if (answer ==='Falla') {
                 sol.level1 = answer;
-                return await step.beginDialog(FALLA_DIALOG); 
+                return await step.beginDialog(FALLA_DIALOG, details); 
             } 
             if (answer ==='Servicio') {
                 sol.level1 = answer;
-                return await step.beginDialog(SERVICIO_DIALOG); 
+                return await step.beginDialog(SERVICIO_DIALOG, details); 
             } 
     }
         console.log('[mainDialog]:choiceDialog<<termina>>');

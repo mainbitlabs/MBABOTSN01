@@ -8,12 +8,6 @@
 |_|/_/    \_\______|______/_/    \_\
                                                 
  */
-const config = require('../config');
-const azurest = require('azure-storage');
-const image2base64 = require('image-to-base64');
-const blobService = azurest.createBlobService(config.storageA,config.accessK);
-const tableSvc = azurest.createTableService(config.storageA, config.accessK);
-
 const { ComponentDialog, WaterfallDialog, ChoicePrompt, ChoiceFactory, TextPrompt,AttachmentPrompt } = require('botbuilder-dialogs');
 
 const { MailDialog, MAIL_DIALOG } = require('./MAIL');
@@ -43,6 +37,8 @@ class FallaDialog extends ComponentDialog {
 
     async firstStep(step) {
     console.log('[FallaDialog]: firstStep');
+    const details = step.options;
+    // console.log(details);
     
     return await step.prompt(CHOICE_PROMPT, {
         prompt: '**Que tipo de falla quieres reportar.**',
@@ -53,10 +49,13 @@ class FallaDialog extends ComponentDialog {
 
 async secondStep(step) {
     console.log('[FallaDialog]: secondStep');
+    const details = step.options;
+    // console.log(details);
+    
     const level2 = step.result.value;
-    const sol = config.solicitud;
+    const sol = details.solicitud;
     sol.level2 = level2;
-        // console.log(config.solicitud);
+        // console.log(details.solicitud);
         switch (level2) {
             case "Física":
                 return await step.prompt(CHOICE_PROMPT,{
@@ -64,23 +63,45 @@ async secondStep(step) {
                     choices: ChoiceFactory.toChoices(['Mouse', 'Teclado', 'Monitor', 'PC', 'Laptop', 'Docking', 'Impresora', 'No Break'])
                 });
             case "Software":
-            
-                 return await step.beginDialog(OTROS_DIALOG);
+                return await step.prompt(TEXT_PROMPT, `Describe tu ${details.solicitud.level1}`);
+                //  return await step.beginDialog(OTROS_DIALOG, details);
         }
 
     }
     
     async finalStep(step){
         console.log('[FallaDialog]: finalStep');
-        if (step.result === undefined) {
-            console.log(config.solicitud);
-            return await step.beginDialog(MAIL_DIALOG);
-        } else {
+        const details = step.options;
+        console.log(step.result);
+        console.log(step.result.value);
+        
+        if (step. result && step.result.value) {
             const result = step.result.value;
-            config.solicitud.level3 = result;
-            return await step.beginDialog(MAIL_DIALOG);
+            details.solicitud.level3 = result;
+            return await step.beginDialog(MAIL_DIALOG, details);
+        } else {
+                const details = step.options
+                const otros = step.result;
+                const sol = details.solicitud;
+                sol.level3 = otros;
+                console.log(details.solicitud);
+                return await step.beginDialog(MAIL_DIALOG, details);
         }
     }
+    // async finalStep(step){
+    //     console.log('[FallaDialog]: finalStep');
+    //     const details = step.options;
+    //     console.log(details);
+        
+    //     if (step.result === undefined) {
+    //         console.log(details.solicitud);
+    //         return await step.beginDialog(MAIL_DIALOG, details);
+    //     } else {
+    //         const result = step.result.value;
+    //         details.solicitud.level3 = result;
+    //         return await step.beginDialog(MAIL_DIALOG, details);
+    //     }
+    // }
 }
 module.exports.FallaDialog = FallaDialog;
 module.exports.FALLA_DIALOG = FALLA_DIALOG;

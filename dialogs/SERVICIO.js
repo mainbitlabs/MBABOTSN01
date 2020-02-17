@@ -49,8 +49,9 @@ class ServicioDialog extends ComponentDialog {
 }
 async secondStep(step){
     console.log('[ServicioDialog]: secondStep');
+    const details = step.options;
     const level2 = step.result.value;
-    const sol = config.solicitud;
+    const sol = details.solicitud;
     sol.level2 = level2;
 
     console.log(level2);
@@ -61,21 +62,25 @@ async secondStep(step){
         case "Resguardo": 
         case "Permisos": 
         case "Bloqueo":
-           config.solicitud.level3 = "";
-           return await step.beginDialog(MAIL_DIALOG);
+           details.solicitud.level3 = "";
+           return await step.beginDialog(MAIL_DIALOG, details);
         case "Otros":
-            return await step.beginDialog(OTROS_DIALOG);     
-    }
+            return await step.prompt(TEXT_PROMPT, `Describe tu ${details.solicitud.level1}`);
+        }
    
 }
 
 async finalStep(step){
-    if (config.solicitud.level3 === "") {
+    console.log('[ServicioDialog]: finalStep');
+    const details = step.options;
+    if (details.solicitud.level3 === "") {
         return await step.endDialog();
     } else {
-        
+        const otros = step.result;
+        const sol = details.solicitud;
+        sol.level3 = otros;
         console.log('[ServicioDialog]: finalStep');
-            return await step.beginDialog(MAIL_DIALOG);
+            return await step.beginDialog(MAIL_DIALOG, details);
     }
     
 }

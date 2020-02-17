@@ -37,6 +37,9 @@ class MailerDialog extends ComponentDialog {
 
 async mailStep(step){
     console.log('[MailerDialog]: mailStep');
+    const details = step.options;
+    console.log(details);
+    
     moment.locale('es');
     const cdmx = moment().tz("America/Mexico_City");
     console.log(cdmx.format('LLL'));
@@ -49,24 +52,24 @@ async mailStep(step){
             }, from: `${config.email1}`,
             to: `${config.email3}`,
 
-            subject: `${config.proyecto} Error en los datos de la serie: ${config.serie} `,
-            html: `<p>El usuario <b>${config.usuario}</b>, reporta un error en los datos de la serie ${config.serie}.</p>
+            subject: `${details.proyecto} Error en los datos de la serie: ${details.serie} `,
+            html: `<p>El usuario <b>${details.usuario}</b>, reporta un error en los datos de la serie ${details.serie}.</p>
 
             <p>Día y hora de registro del servicio: <b>${cdmx.format('LLL')}</b> </p>
             <hr>
-            <b>Contacta al usuario para corregir los datos: ${config.telefono}</b> 
+            <b>Contacta al usuario para corregir los datos: ${details.telefono}</b> 
             <hr>
             <p>Datos del equipo reportado:</p><br> 
-            <b>Proyecto: ${config.proyecto}</b>  <br> 
-            <b>Modelo: ${config.modelo}</b> <br> 
-            <b>Serie: ${config.serie}</b> <br> 
-            <b>Usuario: ${config.usuario}</b> <br> 
-            <b>Marca: ${config.marca}</b> <br> 
-            <b>Dirección: ${config.direccion}</b> <br> 
-            <b>Estado: ${config.estado}</b> <br> 
-            <b>Inmueble: ${config.inmueble}</b> <br> 
-            <b>Teléfono: ${config.telefono}</b> <br> 
-            <b>Extensión: ${config.ext}</b> <br>
+            <b>Proyecto: ${details.proyecto}</b>  <br> 
+            <b>Modelo: ${details.modelo}</b> <br> 
+            <b>Serie: ${details.serie}</b> <br> 
+            <b>Usuario: ${details.usuario}</b> <br> 
+            <b>Marca: ${details.marca}</b> <br> 
+            <b>Dirección: ${details.direccion}</b> <br> 
+            <b>Estado: ${details.estado}</b> <br> 
+            <b>Inmueble: ${details.inmueble}</b> <br> 
+            <b>Teléfono: ${details.telefono}</b> <br> 
+            <b>Extensión: ${details.ext}</b> <br>
             <hr> 
             <p>En breve nuestro ingeniero se comunicará con usted.</p>
             <p>Un placer atenderle.</p>
