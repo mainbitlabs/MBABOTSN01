@@ -29,14 +29,14 @@ class CancelAndHelpDialog extends ComponentDialog {
                 case 'ayuda':
                     const mainbit = { type: ActivityTypes.Message };
                     mainbit.attachments = [this.getMainbit()];
-                    mainbit.text = 'Hola, puedo ayudarte con información de la sucursal, registrar tu entrada y subir las fotos de tus actividades.'
+                    mainbit.text = 'Hola, puedo ayudarte a levantar un ticket de servicio.'
                     await innerDc.context.sendActivity(mainbit);
                     return { status: DialogTurnStatus.waiting };
 
                 case 'bot':
                     const bot = { type: ActivityTypes.Message };
                    bot.attachments = [this.getBot()];
-                    bot.text = 'Hola humano, puedo ayudarte con información de la sucursal, registrar tu entrada y subir las fotos de tus actividades.'
+                    bot.text = 'Hola, puedo ayudarte a levantar un ticket de servicio.'
                     await innerDc.context.sendActivity(bot);
                     return { status: DialogTurnStatus.waiting };
                      
